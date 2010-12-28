@@ -186,7 +186,7 @@ int ntfsFindPartitions (const DISC_INTERFACE *interface, sec_t **partitions)
                         // Read and validate the extended boot record
                         if (interface->readSectors(ebr_lba + next_erb_lba, 1, &sector)) {
                             if (sector.ebr.signature == EBR_SIGNATURE) {
-                                ntfs_log_debug("Logical Partition @ %d: type 0x%x\n", ebr_lba + next_erb_lba,
+                                ntfs_log_debug("Logical Partition @ %d: %s type 0x%x\n", ebr_lba + next_erb_lba,
                                                sector.ebr.partition.status == PARTITION_STATUS_BOOTABLE ? "bootable (active)" : "non-bootable",
                                                sector.ebr.partition.type);
 
