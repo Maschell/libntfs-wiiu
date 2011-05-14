@@ -112,7 +112,7 @@ static int ntfs_device_gekko_io_open(struct ntfs_device *dev, int flags)
     }
 
     // Check that there is a valid NTFS boot sector at the start of the device
-    NTFS_BOOT_SECTOR *boot = (NTFS_BOOT_SECTOR *) ntfs_malloc(MAX_SECTOR_SIZE);
+    NTFS_BOOT_SECTOR *boot = (NTFS_BOOT_SECTOR *) ntfs_alloc(MAX_SECTOR_SIZE);
     if(boot == NULL) {
         errno = ENOMEM;
         return -1;
