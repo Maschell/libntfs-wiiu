@@ -38,6 +38,7 @@
 #include "reparse.h"
 #include "security.h"
 #include "efs.h"
+#include "lock.h"
 #include "unistr.h"
 
 #if   defined (__wiiu__)
@@ -151,13 +152,13 @@ typedef struct _ntfs_vd {
 /* Lock volume */
 static inline void ntfsLock (ntfs_vd *vd)
 {
-    LWP_MutexLock(vd->lock);
+    _NTFS_lock((mutex_t *)vd->lock);
 }
 
 /* Unlock volume */
 static inline void ntfsUnlock (ntfs_vd *vd)
 {
-    LWP_MutexUnlock(vd->lock);
+    _NTFS_unlock((mutex_t *)vd->lock);
 }
 
 /* Gekko device related routines */

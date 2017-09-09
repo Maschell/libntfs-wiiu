@@ -73,7 +73,7 @@ BOOL ntfs_boot_sector_is_ntfs(NTFS_BOOT_SECTOR *b)
 	ntfs_log_debug("Checking bytes per sector.\n");
 	if (le16_to_cpu(b->bpb.bytes_per_sector) <  256 ||
 	    le16_to_cpu(b->bpb.bytes_per_sector) > 4096) {
-		ntfs_log_error("Unexpected bytes per sector value (%d).\n", 
+		ntfs_log_error("Unexpected bytes per sector value (%d).\n",
 			       le16_to_cpu(b->bpb.bytes_per_sector));
 		goto not_ntfs;
 	}
@@ -89,10 +89,10 @@ BOOL ntfs_boot_sector_is_ntfs(NTFS_BOOT_SECTOR *b)
 	}
 
 	ntfs_log_debug("Checking cluster size.\n");
-	i = (u32)le16_to_cpu(b->bpb.bytes_per_sector) * 
+	i = (u32)le16_to_cpu(b->bpb.bytes_per_sector) *
 		b->bpb.sectors_per_cluster;
 	if (i > 65536) {
-		ntfs_log_error("Unexpected cluster size (%d).\n", i);
+		ntfs_log_error("Unexpected cluster size (%d).\n", (int)i);
 		goto not_ntfs;
 	}
 
@@ -109,7 +109,7 @@ BOOL ntfs_boot_sector_is_ntfs(NTFS_BOOT_SECTOR *b)
 			       le16_to_cpu(b->bpb.root_entries),
 			       le16_to_cpu(b->bpb.sectors),
 			       le16_to_cpu(b->bpb.sectors_per_fat),
-			       le32_to_cpu(b->bpb.large_sectors),
+			       (int)le32_to_cpu(b->bpb.large_sectors),
 			       b->bpb.fats);
 		goto not_ntfs;
 	}
@@ -193,14 +193,14 @@ int ntfs_boot_sector_parse(ntfs_volume *vol, const NTFS_BOOT_SECTOR *bs)
 			       "\n", sectors_per_cluster);
 		return -1;
 	}
-	
+
 	sectors = sle64_to_cpu(bs->number_of_sectors);
 	ntfs_log_debug("NumberOfSectors = %lld\n", (long long)sectors);
 	if (!sectors) {
 		ntfs_log_error("Volume size is set to zero.\n");
 		return -1;
 	}
-	if (vol->dev->d_ops->seek(vol->dev, 
+	if (vol->dev->d_ops->seek(vol->dev,
 				  (sectors - 1) << vol->sector_size_bits,
 				  SEEK_SET) == -1) {
 		ntfs_log_perror("Failed to read last sector (%lld)",
@@ -208,7 +208,7 @@ int ntfs_boot_sector_parse(ntfs_volume *vol, const NTFS_BOOT_SECTOR *bs)
 		ntfs_log_error("%s", last_sector_error);
 		return -1;
 	}
-	
+
 	vol->nr_clusters =  sectors >> (ffs(sectors_per_cluster) - 1);
 
 	vol->mft_lcn = sle64_to_cpu(bs->mft_lcn);
@@ -223,11 +223,11 @@ int ntfs_boot_sector_parse(ntfs_volume *vol, const NTFS_BOOT_SECTOR *bs)
 			      (long long)vol->nr_clusters);
 		return -1;
 	}
-	
+
 	vol->cluster_size = sectors_per_cluster * vol->sector_size;
 	if (vol->cluster_size & (vol->cluster_size - 1)) {
 		ntfs_log_error("cluster_size (%d) is not a power of 2.\n",
-			       vol->cluster_size);
+			       (int)vol->cluster_size);
 		return -1;
 	}
 	vol->cluster_size_bits = ffs(vol->cluster_size) - 1;
@@ -252,7 +252,7 @@ int ntfs_boot_sector_parse(ntfs_volume *vol, const NTFS_BOOT_SECTOR *bs)
 		vol->mft_record_size = c << vol->cluster_size_bits;
 	if (vol->mft_record_size & (vol->mft_record_size - 1)) {
 		ntfs_log_error("mft_record_size (%d) is not a power of 2.\n",
-			       vol->mft_record_size);
+			       (int)vol->mft_record_size);
 		return -1;
 	}
 	vol->mft_record_size_bits = ffs(vol->mft_record_size) - 1;

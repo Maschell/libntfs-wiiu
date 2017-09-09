@@ -37,8 +37,11 @@
 #include "ntfsinternal.h"
 #include "ntfsfile.h"
 #include "ntfsdir.h"
+
 #include "gekko_io.h"
+
 #include "cache.h"
+
 
 // NTFS device driver devoptab
 static const devoptab_t devops_ntfs = {
@@ -197,7 +200,7 @@ int ntfsFindPartitions (const DISC_INTERFACE *interface, sec_t **partitions)
                                     if (sector.boot.oem_id == NTFS_OEM_ID) {
                                         ntfs_log_debug("Logical Partition @ %d: Valid NTFS boot sector found\n", part_lba);
                                         if(sector.ebr.partition.type != PARTITION_TYPE_NTFS) {
-                                            ntfs_log_warning("Logical Partition @ %d: Is NTFS but type is 0x%x; 0x%x was expected\n", part_lba, sector.ebr.partition.type, PARTITION_TYPE_NTFS);
+                                            ntfs_log_warning("Logical Partition @ %d: Is NTFS but type is 0x%x; 0x%x was expected\n", (int)  part_lba, sector.ebr.partition.type, PARTITION_TYPE_NTFS);
                                         }
                                         if (partition_count < NTFS_MAX_PARTITIONS) {
                                             partition_starts[partition_count] = part_lba;

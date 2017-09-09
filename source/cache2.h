@@ -49,6 +49,7 @@
     typedef uint16_t u16;
     typedef int32_t s32;
     typedef uint32_t u32;
+    typedef uint64_t u64;
     typedef int mutex_t;
 #elif defined(__gamecube__) || defined (__wii__)
     #include <gctypes.h>

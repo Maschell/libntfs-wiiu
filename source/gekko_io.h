@@ -59,6 +59,7 @@ typedef struct _gekko_fd {
     u32 cachePageSize;                      /* The number of sectors per cache page */
 } gekko_fd;
 
+
 /* Forward declarations */
 struct ntfs_device_operations;
 

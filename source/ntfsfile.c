@@ -220,7 +220,7 @@ int ntfs_open_r (struct _reent *r, void *fileStruct, const char *path, int flags
     return (int)fileStruct;
 }
 
-int ntfs_close_r (struct _reent *r, int fd)
+int ntfs_close_r (struct _reent *r, void * fd)
 {
     ntfs_log_trace("fd %p\n", (void *) fd);
 
@@ -253,7 +253,7 @@ int ntfs_close_r (struct _reent *r, int fd)
     return 0;
 }
 
-ssize_t ntfs_write_r (struct _reent *r, int fd, const char *ptr, size_t len)
+ssize_t ntfs_write_r (struct _reent *r, void * fd, const char *ptr, size_t len)
 {
     ntfs_log_trace("fd %p, ptr %p, len %u\n", (void *) fd, ptr, len);
 
@@ -319,7 +319,7 @@ ssize_t ntfs_write_r (struct _reent *r, int fd, const char *ptr, size_t len)
     return written;
 }
 
-ssize_t ntfs_read_r (struct _reent *r, int fd, char *ptr, size_t len)
+ssize_t ntfs_read_r (struct _reent *r, void * fd, char *ptr, size_t len)
 {
     ntfs_log_trace("fd %p, ptr %p, len %u\n", (void *) fd, ptr, len);
 
@@ -378,7 +378,7 @@ ssize_t ntfs_read_r (struct _reent *r, int fd, char *ptr, size_t len)
     return read;
 }
 
-off_t ntfs_seek_r (struct _reent *r, int fd, off_t pos, int dir)
+off_t ntfs_seek_r (struct _reent *r, void * fd, off_t pos, int dir)
 {
     ntfs_log_trace("fd %p, pos %llu, dir %i\n", (void *) fd, pos, dir);
 
@@ -406,7 +406,7 @@ off_t ntfs_seek_r (struct _reent *r, int fd, off_t pos, int dir)
 
     return position;
 }
-int ntfs_fstat_r (struct _reent *r, int fd, struct stat *st)
+int ntfs_fstat_r (struct _reent *r, void * fd, struct stat *st)
 {
     ntfs_log_trace("fd %p\n", (void *) fd);
 
@@ -431,7 +431,7 @@ int ntfs_fstat_r (struct _reent *r, int fd, struct stat *st)
     return ret;
 }
 
-int ntfs_ftruncate_r (struct _reent *r, int fd, off_t len)
+int ntfs_ftruncate_r (struct _reent *r, void * fd, off_t len)
 {
     ntfs_log_trace("fd %p, len %llu\n", (void *) fd, (u64) len);
 
@@ -498,7 +498,7 @@ int ntfs_ftruncate_r (struct _reent *r, int fd, off_t len)
     return 0;
 }
 
-int ntfs_fsync_r (struct _reent *r, int fd)
+int ntfs_fsync_r (struct _reent *r, void * fd)
 {
     ntfs_log_trace("fd %p\n", (void *) fd);
 

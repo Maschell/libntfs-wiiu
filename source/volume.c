@@ -75,7 +75,7 @@
 #include "realpath.h"
 #include "misc.h"
 
-const char *ntfs_home = 
+const char *ntfs_home =
 "News, support and information:  http://tuxera.com\n";
 
 static const char *invalid_ntfs_msg =
@@ -108,7 +108,7 @@ static const char *opened_volume_msg =
 
 static const char *fakeraid_msg =
 "Either the device is missing or it's powered down, or you have\n"
-"SoftRAID hardware and must use an activated, different device under\n" 
+"SoftRAID hardware and must use an activated, different device under\n"
 "/dev/mapper/, (e.g. /dev/mapper/nvidia_eahaabcc1) to mount NTFS.\n"
 "Please see the 'dmraid' documentation for help.\n";
 
@@ -144,8 +144,8 @@ static int ntfs_inode_free(ntfs_inode **ni)
 	if (ni && *ni) {
 		ret = ntfs_inode_close(*ni);
 		*ni = NULL;
-	} 
-	
+	}
+
 	return ret;
 }
 
@@ -169,7 +169,7 @@ static int __ntfs_volume_release(ntfs_volume *v)
 
 	if (ntfs_inode_free(&v->vol_ni))
 		ntfs_error_set(&err);
-	/* 
+	/*
 	 * FIXME: Inodes must be synced before closing
 	 * attributes, otherwise unmount could fail.
 	 */
@@ -178,20 +178,20 @@ static int __ntfs_volume_release(ntfs_volume *v)
 	ntfs_attr_free(&v->lcnbmp_na);
 	if (ntfs_inode_free(&v->lcnbmp_ni))
 		ntfs_error_set(&err);
-	
+
 	if (v->mft_ni && NInoDirty(v->mft_ni))
 		ntfs_inode_sync(v->mft_ni);
 	ntfs_attr_free(&v->mftbmp_na);
 	ntfs_attr_free(&v->mft_na);
 	if (ntfs_inode_free(&v->mft_ni))
 		ntfs_error_set(&err);
-	
+
 	if (v->mftmirr_ni && NInoDirty(v->mftmirr_ni))
 		ntfs_inode_sync(v->mftmirr_ni);
 	ntfs_attr_free(&v->mftmirr_na);
 	if (ntfs_inode_free(&v->mftmirr_ni))
 		ntfs_error_set(&err);
-	
+
 	if (v->dev) {
 		struct ntfs_device *dev = v->dev;
 
@@ -260,10 +260,10 @@ static int ntfs_mft_load(ntfs_volume *vol)
 		ntfs_log_perror("Error reading $MFT");
 		goto error_exit;
 	}
-	
+
 	if (ntfs_mft_record_check(vol, 0, mb))
 		goto error_exit;
-	
+
 	ctx = ntfs_attr_get_search_ctx(vol->mft_ni, NULL);
 	if (!ctx)
 		goto error_exit;
@@ -288,7 +288,7 @@ static int ntfs_mft_load(ntfs_volume *vol)
 	vol->mft_ni->attr_list = ntfs_malloc(l);
 	if (!vol->mft_ni->attr_list)
 		goto error_exit;
-	
+
 	l = ntfs_get_attribute_value(vol, ctx->attr, vol->mft_ni->attr_list);
 	if (!l) {
 		ntfs_log_error("Failed to get value of $MFT/$ATTR_LIST.\n");
@@ -297,16 +297,16 @@ static int ntfs_mft_load(ntfs_volume *vol)
 	if (l != vol->mft_ni->attr_list_size) {
 		ntfs_log_error("Partial read of $MFT/$ATTR_LIST (%lld != "
 			       "%u).\n", (long long)l,
-			       vol->mft_ni->attr_list_size);
+			       (unsigned int) vol->mft_ni->attr_list_size);
 		goto io_error_exit;
 	}
 
 mft_has_no_attr_list:
 
 	ntfs_attr_setup_flag(vol->mft_ni);
-	
+
 	/* We now have a fully setup ntfs inode for $MFT in vol->mft_ni. */
-	
+
 	/* Get an ntfs attribute for $MFT/$DATA and set it up, too. */
 	vol->mft_na = ntfs_attr_open(vol->mft_ni, AT_DATA, AT_UNNAMED, 0);
 	if (!vol->mft_na) {
@@ -428,18 +428,18 @@ static int ntfs_mftmirr_load(ntfs_volume *vol)
 		ntfs_log_perror("Failed to open inode $MFTMirr");
 		return -1;
 	}
-	
+
 	vol->mftmirr_na = ntfs_attr_open(vol->mftmirr_ni, AT_DATA, AT_UNNAMED, 0);
 	if (!vol->mftmirr_na) {
 		ntfs_log_perror("Failed to open $MFTMirr/$DATA");
 		goto error_exit;
 	}
-	
+
 	if (ntfs_attr_map_runlist(vol->mftmirr_na, 0) < 0) {
 		ntfs_log_perror("Failed to map runlist of $MFTMirr/$DATA");
 		goto error_exit;
 	}
-	
+
 	return 0;
 
 error_exit:
@@ -484,12 +484,12 @@ ntfs_volume *ntfs_volume_startup(struct ntfs_device *dev,
 	bs = ntfs_malloc(sizeof(NTFS_BOOT_SECTOR));
 	if (!bs)
 		return NULL;
-	
+
 	/* Allocate the volume structure. */
 	vol = ntfs_volume_alloc();
 	if (!vol)
 		goto error_exit;
-	
+
 	/* Create the default upcase table. */
 	vol->upcase_len = ntfs_upcase_build_default(&vol->upcase);
 	if (!vol->upcase_len || !vol->upcase)
@@ -498,7 +498,7 @@ ntfs_volume *ntfs_volume_startup(struct ntfs_device *dev,
 	/* Default with no locase table and case sensitive file names */
 	vol->locase = (ntfschar*)NULL;
 	NVolSetCaseSensitive(vol);
-	
+
 		/* by default, all files are shown and not marked hidden */
 	NVolSetShowSysFiles(vol);
 	NVolSetShowHidFiles(vol);
@@ -511,7 +511,7 @@ ntfs_volume *ntfs_volume_startup(struct ntfs_device *dev,
 #endif
 	if (flags & NTFS_MNT_RDONLY)
 		NVolSetReadOnly(vol);
-	
+
 	/* ...->open needs bracketing to compile with glibc 2.7 */
 	if ((dev->d_ops->open)(dev, NVolReadOnly(vol) ? O_RDONLY: O_RDWR)) {
 		if (!NVolReadOnly(vol) && (errno == EROFS)) {
@@ -531,7 +531,7 @@ ntfs_volume *ntfs_volume_startup(struct ntfs_device *dev,
 	}
 	/* Attach the device to the volume. */
 	vol->dev = dev;
-	
+
 	/* Now read the bootsector. */
 	br = ntfs_pread(dev, 0, sizeof(NTFS_BOOT_SECTOR), bs);
 	if (br != sizeof(NTFS_BOOT_SECTOR)) {
@@ -549,7 +549,7 @@ ntfs_volume *ntfs_volume_startup(struct ntfs_device *dev,
 	}
 	if (ntfs_boot_sector_parse(vol, bs) < 0)
 		goto error_exit;
-	
+
 	free(bs);
 	bs = NULL;
 	/* Now set the device block size to the sector size. */
@@ -558,7 +558,7 @@ ntfs_volume *ntfs_volume_startup(struct ntfs_device *dev,
 				"sector size.  This may affect performance "
 				"but should be harmless otherwise.  Error: "
 				"%s\n", strerror(errno));
-	
+
 	/* We now initialize the cluster allocator. */
 	vol->full_zones = 0;
 	mft_zone_size = vol->nr_clusters >> 3;      /* 12.5% */
@@ -652,14 +652,14 @@ static int ntfs_volume_check_logfile(ntfs_volume *vol)
 		errno = EIO;
 		return -1;
 	}
-	
+
 	na = ntfs_attr_open(ni, AT_DATA, AT_UNNAMED, 0);
 	if (!na) {
 		ntfs_log_perror("Failed to open $FILE_LogFile/$DATA");
 		err = EIO;
 		goto out;
 	}
-	
+
 	if (!ntfs_check_logfile(na, &rp) || !ntfs_is_logfile_clean(na, rp))
 		err = EOPNOTSUPP;
 		/*
@@ -682,7 +682,7 @@ static int ntfs_volume_check_logfile(ntfs_volume *vol)
 	}
 	free(rp);
 	ntfs_attr_close(na);
-out:	
+out:
 	if (ntfs_inode_close(ni))
 		ntfs_error_set(&err);
 	if (err) {
@@ -1007,16 +1007,16 @@ ntfs_volume *ntfs_device_mount(struct ntfs_device *dev, ntfs_mount_flags flags)
 		ntfs_log_perror("Failed to open inode FILE_Bitmap");
 		goto error_exit;
 	}
-	
+
 	vol->lcnbmp_na = ntfs_attr_open(vol->lcnbmp_ni, AT_DATA, AT_UNNAMED, 0);
 	if (!vol->lcnbmp_na) {
 		ntfs_log_perror("Failed to open ntfs attribute");
 		goto error_exit;
 	}
-	
+
 	if (vol->lcnbmp_na->data_size > vol->lcnbmp_na->allocated_size) {
 		ntfs_log_error("Corrupt cluster map size (%lld > %lld)\n",
-				(long long)vol->lcnbmp_na->data_size, 
+				(long long)vol->lcnbmp_na->data_size,
 				(long long)vol->lcnbmp_na->allocated_size);
 		goto io_error_exit;
 	}
@@ -1172,7 +1172,7 @@ ntfs_volume *ntfs_device_mount(struct ntfs_device *dev, ntfs_mount_flags flags)
 			vol->vol_name = ntfs_malloc(u + 1);
 			if (!vol->vol_name)
 				goto error_exit;
-			
+
 			for (j = 0; j < (s32)u; j++) {
 				u16 uc = le16_to_cpu(vname[j]);
 				if (uc > 0xff)
@@ -1639,7 +1639,7 @@ int ntfs_logfile_reset(ntfs_volume *vol)
 		ntfs_attr_close(na);
 		goto error_exit;
 	}
-	
+
 	ntfs_attr_close(na);
 	return ntfs_inode_close(ni);
 

@@ -8,7 +8,7 @@ $(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>dev
 endif
 
 ifeq ($(PLATFORM),wiiu)
-include $(DEVKITPPC)/wii_rules
+include $(DEVKITPPC)/wiiu_rules
 endif
 
 ifeq ($(PLATFORM),wii)
@@ -32,7 +32,7 @@ LIBDIR		:=	../lib
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS		=	-Os -Wall -ffast-math -pipe $(MACHDEP) $(INCLUDE) -DHAVE_CONFIG_H
+CFLAGS		=	-Wall -ffast-math -pipe $(MACHDEP) $(INCLUDE) -DHAVE_CONFIG_H
 CXXFLAGS	=	$(CFLAGS)
 ASFLAGS		:=	-g
 export NTFSBIN	:= $(LIBDIR)/$(PLATFORM)/libntfs.a
@@ -87,11 +87,9 @@ export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 			$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-			-I$(CURDIR)/$(BUILD) \
-			-I$(LIBOGC_INC)
+            -I$(CURDIR)/$(BUILD) -I$(PORTLIBS)/include
 
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
-			-L$(LIBOGC_LIB)
+export LIBPATHS	:= $(foreach dir,$(LIBDIRS),-L$(dir)/lib) $(PORTLIBS)/lib
 
 .PHONY: $(BUILD) clean
 

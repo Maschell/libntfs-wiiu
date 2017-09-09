@@ -35,7 +35,11 @@
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include <ogc/lwp_watchdog.h>
+#if   defined (__wiiu__)
+
+#elif defined(__gamecube__) || defined (__wii__)
+    #include <ogc/lwp_watchdog.h>
+#endif
 #include <string.h>
 #include <limits.h>
 

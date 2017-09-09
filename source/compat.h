@@ -69,11 +69,11 @@ extern char *strsep(char **stringp, const char *delim);
 #define O_BINARY		0		/* unix is binary by default */
 #endif
 
-#ifdef GEKKO
+#if defined(GEKKO) || defined (__wiiu__)
 
 #include "mem_allocate.h"
 
-#define XATTR_CREATE 1 
+#define XATTR_CREATE 1
 #define XATTR_REPLACE 2
 
 #define MINORBITS       20
@@ -81,7 +81,7 @@ extern char *strsep(char **stringp, const char *delim);
 
 #define major(dev)      ((unsigned int) ((dev) >> MINORBITS))
 #define minor(dev)      ((unsigned int) ((dev) & MINORMASK))
-#define mkdev(ma,mi)    (((ma) << MINORBITS) | (mi)) 
+#define mkdev(ma,mi)    (((ma) << MINORBITS) | (mi))
 #define random          rand
 
 #endif /* defined GEKKO */

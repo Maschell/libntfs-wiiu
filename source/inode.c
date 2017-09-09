@@ -124,7 +124,7 @@ ntfs_inode *ntfs_inode_allocate(ntfs_volume *vol)
 static void __ntfs_inode_release(ntfs_inode *ni)
 {
 	if (NInoDirty(ni))
-		ntfs_log_error("Releasing dirty inode %lld!\n", 
+		ntfs_log_error("Releasing dirty inode %lld!\n",
 			       (long long)ni->mft_no);
 	if (NInoAttrList(ni) && ni->attr_list)
 		free(ni->attr_list);
@@ -243,7 +243,7 @@ static ntfs_inode *ntfs_inode_real_open(ntfs_volume *vol, const MFT_REF mref)
 	if (l != ni->attr_list_size) {
 		errno = EIO;
 		ntfs_log_perror("Unexpected attrlist size (%lld <> %u), inode "
-				"%lld", (long long)l, ni->attr_list_size, 
+				"%lld", (long long)l, (unsigned int) ni->attr_list_size,
 				(long long)MREF(mref));
 		goto put_err_out;
 	}
@@ -273,7 +273,7 @@ get_size:
 		set_nino_flag(ni,KnownSize);
 	}
 	ntfs_attr_put_search_ctx(ctx);
-out:	
+out:
 	ntfs_log_leave("\n");
 	return ni;
 
@@ -313,7 +313,7 @@ err_out:
 int ntfs_inode_real_close(ntfs_inode *ni)
 {
 	int ret = -1;
-	
+
 	if (!ni)
 		return 0;
 
@@ -378,8 +378,8 @@ int ntfs_inode_real_close(ntfs_inode *ni)
 			i = -1;
 			break;
 		}
-		
-		/* 
+
+		/*
 		 *  We could successfully sync, so only log this error
 		 *  and try to sync other inode extents too.
 		 */
@@ -387,7 +387,7 @@ int ntfs_inode_real_close(ntfs_inode *ni)
 			ntfs_log_error("Extent inode %lld was not found\n",
 				       (long long)ni->mft_no);
 	}
-	
+
 	__ntfs_inode_release(ni);
 	ret = 0;
 err:
@@ -585,11 +585,11 @@ ntfs_inode *ntfs_extent_inode_open(ntfs_inode *base_ni, const MFT_REF mref)
 		ntfs_log_perror("%s", __FUNCTION__);
 		return NULL;
 	}
-	
+
 	ntfs_log_enter("Opening extent inode %lld (base mft record %lld).\n",
 			(unsigned long long)mft_no,
 			(unsigned long long)base_ni->mft_no);
-	
+
 	if (!base_ni->mft_no) {
 			/*
 			 * When getting extents of MFT, we must be sure
@@ -833,7 +833,7 @@ static int ntfs_inode_sync_file_name(ntfs_inode *ni, ntfs_inode *dir_ni)
 			if (dir_ni)
 				index_ni = dir_ni;
 			else
-				index_ni = ntfs_inode_open(ni->vol, 
+				index_ni = ntfs_inode_open(ni->vol,
 					le64_to_cpu(fn->parent_directory));
 		if (!index_ni) {
 			if (!err)
@@ -996,8 +996,8 @@ static int ntfs_inode_sync_in_dir(ntfs_inode *ni, ntfs_inode *dir_ni)
 			}
 			NInoAttrListSetDirty(ni);
 			goto sync_inode;
-		} 
-		
+		}
+
 		if (na->data_size == ni->attr_list_size) {
 			if (ntfs_attr_pwrite(na, 0, ni->attr_list_size,
 				        ni->attr_list) != ni->attr_list_size) {
@@ -1019,7 +1019,7 @@ static int ntfs_inode_sync_in_dir(ntfs_inode *ni, ntfs_inode *dir_ni)
 		}
 		ntfs_attr_close(na);
 	}
-	
+
 sync_inode:
 	/* Write this inode out to the $MFT (and $MFTMirr if applicable). */
 	if (NInoTestAndClearDirty(ni)) {
@@ -1045,8 +1045,8 @@ sync_inode:
 			eni = ni->extent_nis[i];
 			if (!NInoTestAndClearDirty(eni))
 				continue;
-			
-			if (ntfs_mft_record_write(eni->vol, eni->mft_no, 
+
+			if (ntfs_mft_record_write(eni->vol, eni->mft_no,
 						  eni->mrec)) {
 				if (!err || errno == EIO) {
 					err = errno;
@@ -1066,7 +1066,7 @@ sync_inode:
 		errno = err;
 		ret = -1;
 	}
-	
+
 	ntfs_log_leave("\n");
 	return ret;
 }
@@ -1135,19 +1135,19 @@ int ntfs_inode_add_attrlist(ntfs_inode *ni)
 	}
 	/* Walk through all attributes. */
 	while (!ntfs_attr_lookup(AT_UNUSED, NULL, 0, 0, 0, NULL, 0, ctx)) {
-		
+
 		int ale_size;
-		
+
 		if (ctx->attr->type == AT_ATTRIBUTE_LIST) {
 			err = EIO;
 			ntfs_log_perror("Attribute list already present");
 			goto put_err_out;
 		}
-		
+
 		ale_size = (sizeof(ATTR_LIST_ENTRY) + sizeof(ntfschar) *
 					ctx->attr->name_length + 7) & ~7;
 		al_len += ale_size;
-		
+
 		aln = realloc(al, al_len);
 		if (!aln) {
 			err = errno;
@@ -1156,9 +1156,9 @@ int ntfs_inode_add_attrlist(ntfs_inode *ni)
 		}
 		ale = (ATTR_LIST_ENTRY *)(aln + ((u8 *)ale - al));
 		al = aln;
-		
+
 		memset(ale, 0, ale_size);
-		
+
 		/* Add attribute to attribute list. */
 		ale->type = ctx->attr->type;
 		ale->length = cpu_to_le16((sizeof(ATTR_LIST_ENTRY) +
@@ -1225,7 +1225,7 @@ int ntfs_inode_add_attrlist(ntfs_inode *ni)
 		ntfs_attr_close(na);
 		goto remove_attrlist_record;;
 	}
-	
+
 	ntfs_attr_put_search_ctx(ctx);
 	ntfs_attr_close(na);
 	return 0;
@@ -1326,12 +1326,12 @@ int ntfs_inode_free_space(ntfs_inode *ni, int size)
 		 * find next, because we don't need such.
 		 */
 		while (ctx->ntfs_ino->mft_no != ni->mft_no) {
-retry:			
+retry:
 			if (ntfs_attr_position(AT_UNUSED, ctx))
 				goto put_err_out;
 		}
 
-		if (ntfs_inode_base(ctx->ntfs_ino)->mft_no == FILE_MFT && 
+		if (ntfs_inode_base(ctx->ntfs_ino)->mft_no == FILE_MFT &&
 		    ctx->attr->type == AT_DATA)
 			goto retry;
 
@@ -1352,10 +1352,10 @@ retry:
 			return 0;
 		}
 		/*
-		 * Reposition to first attribute after $STANDARD_INFORMATION 
-		 * and $ATTRIBUTE_LIST instead of simply skipping this attribute 
-		 * because in the case when we have got only in-memory attribute 
-		 * list then ntfs_attr_lookup will fail when it tries to find 
+		 * Reposition to first attribute after $STANDARD_INFORMATION
+		 * and $ATTRIBUTE_LIST instead of simply skipping this attribute
+		 * because in the case when we have got only in-memory attribute
+		 * list then ntfs_attr_lookup will fail when it tries to find
 		 * $ATTRIBUTE_LIST.
 		 */
 		ntfs_attr_reinit_search_ctx(ctx);
@@ -1397,7 +1397,7 @@ void ntfs_inode_update_times(ntfs_inode *ni, ntfs_time_update_flags mask)
 		ni->last_data_change_time = now;
 	if (mask & NTFS_UPDATE_CTIME)
 		ni->last_mft_change_time = now;
-	
+
 	NInoFileNameSetDirty(ni);
 	NInoSetDirty(ni);
 }
@@ -1410,7 +1410,7 @@ void ntfs_inode_update_times(ntfs_inode *ni, ntfs_time_update_flags mask)
  * Check if the mft record given by @mft_no and @attr contains the bad sector
  * list. Please note that mft record numbers describing $Badclus extent inodes
  * will not match the current $Badclus:$Bad check.
- * 
+ *
  * On success return 1 if the file is $Badclus:$Bad, otherwise return 0.
  * On error return -1 with errno set to the error code.
  */
@@ -1424,7 +1424,7 @@ int ntfs_inode_badclus_bad(u64 mft_no, ATTR_RECORD *attr)
 		errno = EINVAL;
 		return -1;
 	}
-	
+
 	if (mft_no != FILE_BadClus)
 	       	return 0;
 
@@ -1498,7 +1498,7 @@ int ntfs_inode_get_times(ntfs_inode *ni, char *value, size_t size)
 					ret = -ERANGE;
 			}
 		ntfs_attr_put_search_ctx(ctx);
-	}		
+	}
 	return (ret ? ret : -errno);
 }
 
