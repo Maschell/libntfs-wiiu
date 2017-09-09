@@ -27,8 +27,18 @@
 
 #include "types.h"
 #include "cache2.h"
-#include <gccore.h>
-#include <ogc/disc_io.h>
+
+#if   defined (__wiiu__)
+    #include <iosuhax_disc_interface.h>
+    typedef uint8_t u8;
+    typedef uint16_t u16;
+    typedef int32_t s32;
+    typedef uint32_t u32;
+    typedef int mutex_t;
+#elif defined(__gamecube__) || defined (__wii__)
+    #include <ogc/disc_io.h>
+    #include <gccore.h>
+#endif
 
 #define MAX_SECTOR_SIZE     4096
 

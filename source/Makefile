@@ -7,6 +7,10 @@ ifeq ($(strip $(DEVKITPPC)),)
 $(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>devkitPPC")
 endif
 
+ifeq ($(PLATFORM),wiiu)
+include $(DEVKITPPC)/wii_rules
+endif
+
 ifeq ($(PLATFORM),wii)
 include $(DEVKITPPC)/wii_rules
 endif
@@ -20,7 +24,7 @@ endif
 # SOURCES is a list of directories containing source code
 # INCLUDES is a list of directories containing extra header files
 #---------------------------------------------------------------------------------
-BUILD		?=	wii_release
+BUILD		?=	wiiu_release
 SOURCES		:=	.
 INCLUDES	:=	../include
 LIBDIR		:=	../lib
@@ -37,7 +41,13 @@ ifeq ($(BUILD),cube_debug)
 CFLAGS += -DDEBUG
 CXXFLAGS += -DDEBUG
 endif
+
 ifeq ($(BUILD),wii_debug)
+CFLAGS += -DDEBUG
+CXXFLAGS += -DDEBUG
+endif
+
+ifeq ($(BUILD),wiiu_debug)
 CFLAGS += -DDEBUG
 CXXFLAGS += -DDEBUG
 endif
@@ -93,7 +103,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr wii_debug wii_release cube_debug cube_release $(LIBDIR)
+	@rm -fr wii_debug wii_release wiiu_release cube_debug cube_release $(LIBDIR)
 
 all: $(NTFSBIN)
 
@@ -104,6 +114,10 @@ cube-install:
 wii-install:
 	cp ../include/ntfs.h $(PORTLIBS)/include
 	cp ../lib/wii/libntfs.a $(PORTLIBS)/lib
+
+wiiu-install:
+	cp ../include/ntfs.h $(PORTLIBS)/include
+	cp ../lib/wiiu/libntfs.a $(PORTLIBS)/lib
 
 #---------------------------------------------------------------------------------
 else

@@ -27,9 +27,18 @@
 extern "C" {
 #endif
 
-#include <gctypes.h>
-#include <gccore.h>
-#include <ogc/disc_io.h>
+#if defined(__gamecube__) || defined (__wii__)
+    #include <gctypes.h>
+    #include <ogc/disc_io.h>
+    #include <gccore.h>
+#elif   defined (__wiiu__)
+    #include <iosuhax_disc_interface.h>
+    typedef uint8_t u8;
+    typedef uint16_t u16;
+    typedef int32_t s32;
+    typedef uint32_t u32;
+    typedef int mutex_t;
+#endif
 
 /* NTFS errno values */
 #define ENOPART                         3000 /* No partition was found */
