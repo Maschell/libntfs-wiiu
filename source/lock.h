@@ -51,6 +51,43 @@ static inline void _NTFS_unlock(mutex_t *mutex)
 {
 	LWP_MutexUnlock(*mutex);
 }
+/* //not working.
+#elif defined(__wiiu__)
+#ifndef mutex_t
+typedef int mutex_t;
+#endif
+
+#define OS_MUTEX_SIZE 44
+
+extern void (* OSInitMutex)(void* mutex);
+extern void (* OSLockMutex)(void* mutex);
+extern void (* OSUnlockMutex)(void* mutex);
+extern void (* OSFatal)(const char *msg);
+
+static inline void _NTFS_lock_init(mutex_t *mutex,int unkwn){
+    void* new_mutex = malloc(OS_MUTEX_SIZE);
+    if(new_mutex == NULL){
+        OSFatal("_NTFS_lock_init malloc fail");
+    }
+
+    *mutex = (mutex_t) new_mutex;
+    OSInitMutex(new_mutex);
+}
+
+static inline void _NTFS_lock_deinit(mutex_t *mutex){
+    free((void*)(*mutex));
+    *mutex = 0;
+}
+
+static inline void _NTFS_lock(mutex_t *mutex)
+{
+    OSLockMutex((void*)*mutex);
+}
+
+static inline void _NTFS_unlock(mutex_t *mutex)
+{
+    OSUnlockMutex((void*)*mutex);
+}*/
 
 #else
 
