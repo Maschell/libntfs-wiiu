@@ -320,6 +320,27 @@ int ntfsMountAll (ntfs_md **mounts, u32 flags)
 
             }
             ntfs_free(partitions);
+        }else if(partition_count == 0){
+            int k = 0;
+            // Find the next unused mount name
+            do {
+                sprintf(name, "%s%i", NTFS_MOUNT_PREFIX, k++);
+                if (k >= NTFS_MAX_MOUNTS) {
+                    ntfs_free(partitions);
+                    errno = EADDRNOTAVAIL;
+                    return -1;
+                }
+            } while (ntfsGetDevice(name, false));
+
+            // Mount the partition
+            if (mount_count < NTFS_MAX_MOUNTS) {
+                if (ntfsMount(name, disc->interface, 0, CACHE_DEFAULT_PAGE_SIZE, CACHE_DEFAULT_PAGE_COUNT, flags)) {
+                    strcpy(mount_points[mount_count].name, name);
+                    mount_points[mount_count].interface = disc->interface;
+                    mount_points[mount_count].startSector = 0;
+                    mount_count++;
+                }
+            }
         }
     }
 
