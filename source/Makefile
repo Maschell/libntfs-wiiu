@@ -8,15 +8,16 @@ $(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>dev
 endif
 
 ifeq ($(PLATFORM),wiiu)
-include $(DEVKITPPC)/wiiu_rules
+    MACHDEP = -DESPRESSO -mwup -mcpu=750 -meabi -mhard-float
+    include $(DEVKITPPC)/base_rules
 endif
 
 ifeq ($(PLATFORM),wii)
-include $(DEVKITPPC)/wii_rules
+    include $(DEVKITPPC)/wii_rules
 endif
 
 ifeq ($(PLATFORM),cube)
-include $(DEVKITPPC)/gamecube_rules
+    include $(DEVKITPPC)/gamecube_rules
 endif
 
 #---------------------------------------------------------------------------------
@@ -55,7 +56,7 @@ endif
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS		:=
+LIBS		:= 
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
