@@ -35,9 +35,9 @@
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#if   defined (__wiiu__)
+#if   defined (ESPRESSO)
 
-#elif defined(__gamecube__) || defined (__wii__)
+#elif defined(__gamecube__) || defined (ESPRESSO)
     #include <ogc/lwp_watchdog.h>
 #endif
 #include <string.h>

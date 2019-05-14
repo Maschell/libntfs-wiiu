@@ -43,7 +43,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#if   defined (__wiiu__)
+#if   defined (ESPRESSO)
     #include <iosuhax_disc_interface.h>
     typedef uint8_t u8;
     typedef uint16_t u16;
