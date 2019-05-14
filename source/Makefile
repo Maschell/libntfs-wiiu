@@ -8,8 +8,9 @@ $(error "Please set DEVKITPPC in your environment. export DEVKITPPC=<path to>dev
 endif
 
 ifeq ($(PLATFORM),wiiu)
-    MACHDEP = -DESPRESSO -mwup -mcpu=750 -meabi -mhard-float
+    MACHDEP = -D__wiiu__ -mcpu=750 -meabi -mhard-float
     include $(DEVKITPPC)/base_rules
+    export PORTLIBS    := $(DEVKITPRO)/portlibs/ppc
 endif
 
 ifeq ($(PLATFORM),wii)
