@@ -66,7 +66,7 @@
 #include <sys/xattr.h>
 #endif
 
-#if defined(ESPRESSO)
+#if defined(__wiiu__)
     #define major(dev) ((int)(((unsigned int) (dev) >> 8) & 0xff))
     #define minor(dev) ((int)((dev) & 0xff))
 #endif // defined

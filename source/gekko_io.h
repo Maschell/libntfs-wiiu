@@ -28,7 +28,7 @@
 #include "types.h"
 #include "cache2.h"
 
-#if   defined (ESPRESSO)
+#if   defined (__wiiu__)
     #include <iosuhax_disc_interface.h>
     typedef uint8_t u8;
     typedef uint16_t u16;

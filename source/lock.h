@@ -52,7 +52,7 @@ static inline void _NTFS_unlock(mutex_t *mutex)
 	LWP_MutexUnlock(*mutex);
 }
 /* //not working.
-#elif defined(ESPRESSO)
+#elif defined(__wiiu__)
 #ifndef mutex_t
 typedef int mutex_t;
 #endif

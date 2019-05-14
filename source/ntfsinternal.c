@@ -52,7 +52,7 @@ const INTERFACE_ID ntfs_disc_interfaces[] = {
     { NULL, NULL }
 };
 
-#elif defined (ESPRESSO)
+#elif defined (__wiiu__)
     #include <iosuhax_disc_interface.h>
 
 const INTERFACE_ID ntfs_disc_interfaces[] = {

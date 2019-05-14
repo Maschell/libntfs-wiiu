@@ -69,7 +69,7 @@ extern char *strsep(char **stringp, const char *delim);
 #define O_BINARY		0		/* unix is binary by default */
 #endif
 
-#if defined(GEKKO) || defined (ESPRESSO)
+#if defined(GEKKO) || defined (__wiiu__)
 
 #include "mem_allocate.h"
 
